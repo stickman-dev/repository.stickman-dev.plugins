@@ -7,14 +7,14 @@
 #
 # What it does:
 #   1. Reads the addon id (the source repo's folder name) and version (from its addon.xml).
-#   2. Builds a clean zip of the addon's current committed state (git archive) into zips/<id>/.
+#   2. Builds a clean zip of the addon's current committed state (git archive) into repo/zips/<id>/.
 #   3. Drops loose (unzipped) copies of addon.xml and resources/icon.png next to the zip,
 #      since Kodi fetches those directly over HTTP to render the repository browse list
 #      before an addon is installed - it doesn't peek inside the zip for that.
-#   4. Regenerates zips/addons.xml by pulling addon.xml out of the newest zip for every
-#      addon folder under zips/ (so it stays correct even if this repo ends up hosting
+#   4. Regenerates repo/zips/addons.xml by pulling addon.xml out of the newest zip for every
+#      addon folder under repo/zips/ (so it stays correct even if this repo ends up hosting
 #      more than one addon later).
-#   5. Regenerates zips/addons.xml.md5.
+#   5. Regenerates repo/zips/addons.xml.md5.
 #   6. Commits and pushes.
 #
 # Requirements: the addon source repo must be a git repo with no uncommitted changes,
@@ -53,7 +53,7 @@ fi
 
 echo "Publishing $ADDON_ID version $VERSION"
 
-ZIP_DIR="$REPO_DIR/zips/$ADDON_ID"
+ZIP_DIR="$REPO_DIR/repo/zips/$ADDON_ID"
 ZIP_NAME="$ADDON_ID-$VERSION.zip"
 mkdir -p "$ZIP_DIR"
 
@@ -75,17 +75,17 @@ cd "$REPO_DIR"
 {
     echo '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     echo '<addons>'
-    for dir in zips/*/; do
+    for dir in repo/zips/*/; do
         addon=$(basename "$dir")
         newest_zip=$(ls "$dir"*.zip | sort -V | tail -n1)
         unzip -p "$newest_zip" "$addon/addon.xml" | tail -n +2
     done
     echo '</addons>'
-} > zips/addons.xml
+} > repo/zips/addons.xml
 
-md5sum zips/addons.xml | awk '{print $1}' > zips/addons.xml.md5
+md5sum repo/zips/addons.xml | awk '{print $1}' > repo/zips/addons.xml.md5
 
-git add zips/
+git add repo/zips/
 git commit -m "Publish $ADDON_ID $VERSION"
 git push
 
