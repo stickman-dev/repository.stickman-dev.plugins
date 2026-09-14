@@ -8,11 +8,14 @@
 # What it does:
 #   1. Reads the addon id (the source repo's folder name) and version (from its addon.xml).
 #   2. Builds a clean zip of the addon's current committed state (git archive) into zips/<id>/.
-#   3. Regenerates zips/addons.xml by pulling addon.xml out of the newest zip for every
+#   3. Drops loose (unzipped) copies of addon.xml and resources/icon.png next to the zip,
+#      since Kodi fetches those directly over HTTP to render the repository browse list
+#      before an addon is installed - it doesn't peek inside the zip for that.
+#   4. Regenerates zips/addons.xml by pulling addon.xml out of the newest zip for every
 #      addon folder under zips/ (so it stays correct even if this repo ends up hosting
 #      more than one addon later).
-#   4. Regenerates zips/addons.xml.md5.
-#   5. Commits and pushes.
+#   5. Regenerates zips/addons.xml.md5.
+#   6. Commits and pushes.
 #
 # Requirements: the addon source repo must be a git repo with no uncommitted changes,
 # and its addon.xml version must not already have a zip published here (bump the version
@@ -61,6 +64,11 @@ fi
 
 git archive --format=zip --prefix="$ADDON_ID/" -o "$ZIP_DIR/$ZIP_NAME" HEAD
 echo "Built $ZIP_DIR/$ZIP_NAME"
+
+cp addon.xml "$ZIP_DIR/addon.xml"
+if [ -f resources/icon.png ]; then
+    cp resources/icon.png "$ZIP_DIR/icon.png"
+fi
 
 # Regenerate addons.xml from the newest zip of every addon this repo hosts
 cd "$REPO_DIR"
