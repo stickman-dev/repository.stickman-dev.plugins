@@ -66,8 +66,15 @@ git archive --format=zip --prefix="$ADDON_ID/" -o "$ZIP_DIR/$ZIP_NAME" HEAD
 echo "Built $ZIP_DIR/$ZIP_NAME"
 
 cp addon.xml "$ZIP_DIR/addon.xml"
-if [ -f resources/icon.png ]; then
-    cp resources/icon.png "$ZIP_DIR/icon.png"
+
+# Copy the icon preserving its relative path from addon.xml's <icon> tag (usually
+# resources/icon.png), since that's the path Kodi resolves it against inside the
+# datadir - flattening it to a bare icon.png means Kodi looks in the wrong place
+# and shows no icon at all.
+ICON_PATH=$(grep -oP '(?<=<icon>)[^<]+' addon.xml | head -1)
+if [ -n "$ICON_PATH" ] && [ -f "$ICON_PATH" ]; then
+    mkdir -p "$ZIP_DIR/$(dirname "$ICON_PATH")"
+    cp "$ICON_PATH" "$ZIP_DIR/$ICON_PATH"
 fi
 
 # Regenerate addons.xml from the newest zip of every addon this repo hosts
