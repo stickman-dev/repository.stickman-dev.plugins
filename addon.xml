@@ -5,9 +5,9 @@
 	</requires>
 	<extension point="xbmc.addon.repository" name="Stickman-Dev Add-on Repository">
 		<dir>
-			<info compressed="false">https://stickman-dev.github.io/repository.stickman-dev.plugins/repo/zips/addons.xml</info>
-			<checksum>https://stickman-dev.github.io/repository.stickman-dev.plugins/repo/zips/addons.xml.md5</checksum>
-			<datadir zip="true">https://stickman-dev.github.io/repository.stickman-dev.plugins/repo/zips/</datadir>
+			<info compressed="false">https://raw.githubusercontent.com/stickman-dev/repository.stickman-dev.plugins/main/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/stickman-dev/repository.stickman-dev.plugins/main/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/stickman-dev/repository.stickman-dev.plugins/main/zips/</datadir>
 		</dir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
